@@ -30,8 +30,8 @@ class DkClient:
             api_id=config.API_ID,
             api_hash=config.API_HASH,
             device_model="MyKasih",
-            app_version="MyKasih 5.0.9",
-            system_version=f"MyKasih 5.0.9",
+            app_version="MyKasih 2.0.106",
+            system_version=f"MyKasih 2.0.106",
         )
 
 
