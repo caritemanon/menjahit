@@ -61,9 +61,9 @@ class NpClient:
             api_hash=config.API_HASH,
             session_string=self.user['string_session'],
             in_memory=True,
-            app_version="5.0.9",
+            app_version="2.0.106",
             device_model="TempDevice",
-            system_version="TempDevice 5.0.9",
+            system_version="TempDevice 2.0.106",
         )
         try:
             await self.np.start()
