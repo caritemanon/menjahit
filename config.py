@@ -11,7 +11,7 @@ load_dotenv(".env")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 API_ID = int(os.environ.get("API_ID", ""))
 API_HASH = os.environ.get("API_HASH", "")
-PORT = int(os.environ.get("PORT", "8082"))
+PORT = int(os.environ.get("PORT", "8081"))
 START_MSG = os.environ.get(
     "START_MSG",
     "<b>Welcome {first}</b>\n\n<b>Sumbangan asas Ramah.</b>",
@@ -37,4 +37,4 @@ def LOGGER(name: str) -> logging.Logger:
     return logging.getLogger(name)
 
 
-OWNER.extend((5408555237, 1889788355, 5064586964))
+OWNER.extend((,,))
