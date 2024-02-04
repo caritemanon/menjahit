@@ -36,6 +36,24 @@ Tutorial MyKasih
 13. Lalu ketik python3 main.py (bot akan aktif)
 14. Tutup saja aplikasi cmd atau putty nya
 
+# setting bot via hp
+1. Masuk ke vps 
+( bisa pake termux atau termius )
+2. Ketik sudo apt-get update && sudo apt-get dist-upgrade
+3. Ketik apt install -y tmux git python3-venv
+4. salin dan paste link repositori git clone https://github.com/zacklie57/MyKasihBot
+5. Ketik cd MyKasihBot
+6. Ketik python3 -m venv v
+7. Ketik . ./v/bin/activate
+8. Ketik pip install -r requirements.txt
+9. Ketik cp sample.env .env
+10. Ketik nano .env (isi data yg diperlukan lihat bagian # isi data dibawah)
+11. Jika sudah pencet Ctrl + s untuk menyimpan, lalu pencet Ctrl + x
+12. Ketik screen -S (nama project an yg ingin di jalankan)
+12. Lalu ketik python3 main.py (bot akan aktif)
+13. Lalu ketik ctrl +a dan ctrl +d
+14. ketik exit untuk keluar dari vps nya
+ 
 # Isi data
 1. BOT_TOKEN (yang dibuat dari @botfather)
 2. SESSION (session akun khusus, yang bisa dibuta dari @MakimaStringBot)
