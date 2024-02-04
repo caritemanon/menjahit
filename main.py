@@ -29,9 +29,9 @@ class DkClient:
             name=session,
             api_id=config.API_ID,
             api_hash=config.API_HASH,
-            device_model="MyKasih",
-            app_version="MyKasih 2.0.106",
-            system_version=f"MyKasih 2.0.106",
+            device_model="MyKasihBot",
+            app_version="MyKasihBot 2.0.106",
+            system_version=f"MyKasihBot 2.0.106",
         )
 
 
