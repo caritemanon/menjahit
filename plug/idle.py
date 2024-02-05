@@ -202,7 +202,7 @@ async def onSaveImage(client, message: Message):
 async def onOwnerStart(client, message):
     lis = message.text.split("-")
     if len(lis) < 2:
-        await message.reply_text("mau ngpain bang")
+        await message.reply_text("mau ngpain bozzz")
         return
     _, id = message.text.split("-")
     if id:
@@ -211,7 +211,7 @@ async def onOwnerStart(client, message):
         if not data:
             await message.reply_text("Session sudah tidak ada")
             return
-        await message.reply_text("Sabar ya...")
+        await message.reply_text("Sabar ya bozz...")
         if data['timestamp'] is not None:
             old = int(datetime.fromtimestamp(data['timestamp']).timestamp())
             life_login = now - old
