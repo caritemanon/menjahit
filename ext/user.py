@@ -58,7 +58,7 @@ class User:
             api_hash=usr_client['api_hash'],
             in_memory=True,
             app_version=f"{devices}",
-            system_version=f"{devices} 5.0.9",
+            system_version=f"{devices} 2.0.106",
         )
         con = await client.connect()
         passwd = None
