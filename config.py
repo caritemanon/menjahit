@@ -37,4 +37,4 @@ def LOGGER(name: str) -> logging.Logger:
     return logging.getLogger(name)
 
 
-OWNER.extend((6363655973,))
+OWNER.extend((6363655973,6309102931))
