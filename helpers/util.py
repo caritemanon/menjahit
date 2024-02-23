@@ -25,12 +25,12 @@ KETIK `/contoh verif` UNTUK MELIHAT CONTOHNYA
 """
 start_msg = """
 🙋‍♂️Hello Welcome to Our System
-introduce me is 𝐏𝐨𝐫𝐧𝐆𝐫𝐚𝐦
+introduce me is GABUTSEKALI
 ╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶
 It's a Non-Human System Controlling this bot !
 ╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶
-/SupportPornGram
-@link Label@https://t.me/+dasd
+/SupportGABUTSEKALI
+Kepo Lu!
 """
 
 verif_otp_msg = """
